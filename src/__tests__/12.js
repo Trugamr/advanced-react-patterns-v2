@@ -81,7 +81,7 @@ test('handles static properties', () => {
 // 3. Change submitted from `false` to `true`
 // 4. And you're all done!
 /*
-http://ws.kcd.im/?ws=react%20patterns&e=12&em=
+http://ws.kcd.im/?ws=react%20patterns&e=12&em=shivam38%40hotmail.com
 */
 test.skip('I submitted my elaboration and feedback', () => {
   const submitted = false // change this when you've submitted!
