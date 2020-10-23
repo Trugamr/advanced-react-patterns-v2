@@ -4,32 +4,28 @@ import {Switch} from '../switch'
 
 // 🐨 create your React context here with React.createContext
 
+const ToggleContext = React.createContext({on: false})
+
 class Toggle extends React.Component {
   // 🐨 expose the ToggleContext.Consumer as a static property of Toggle here.
-  state = {on: false}
+  static Consumer = ({children}) => (
+    <ToggleContext.Consumer>{children}</ToggleContext.Consumer>
+  )
   toggle = () =>
     this.setState(
       ({on}) => ({on: !on}),
       () => this.props.onToggle(this.state.on),
     )
+  state = {on: false, toggle: this.toggle}
   render() {
     // 🐨 replace this with rendering the ToggleContext.Provider
-    return this.props.children({
-      on: this.state.on,
-      toggle: this.toggle,
-    })
+    return (
+      <ToggleContext.Provider value={this.state}>
+        {this.props.children}
+      </ToggleContext.Provider>
+    )
   }
 }
-
-// 💯 Extra credit: Add a custom Consumer that validates the
-// ToggleContext.Consumer is rendered within a provider
-//
-// 💯 Extra credit: avoid unecessary re-renders by only updating the value when
-// state changes
-//
-// 💯 Extra credit: support render props as well
-//
-// 💯 Extra credit: support (and expose) compound components!
 
 // Don't make changes to the Usage component. It's here to show you how your
 // component is intended to be used and is used in the tests.
