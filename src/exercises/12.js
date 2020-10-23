@@ -1,7 +1,7 @@
 // The provider pattern
 import React, {Fragment} from 'react'
 // 🐨 you're going to need this :)
-// import hoistNonReactStatics from 'hoist-non-react-statics'
+import hoistNonReactStatics from 'hoist-non-react-statics'
 import {Switch} from '../switch'
 
 const ToggleContext = React.createContext()
@@ -16,13 +16,15 @@ class Toggle extends React.Component {
   state = {on: false, toggle: this.toggle}
   render() {
     return (
-      <ToggleContext.Provider value={this.state} {...this.props} />
+      <ToggleContext.Provider
+        value={this.state}
+        {...this.props}
+      ></ToggleContext.Provider>
     )
   }
 }
 
 function withToggle(Component) {
-  return Component
   // The `withToggle` function is called a "Higher Order Component"
   // It's another way to share code and allows you to statically
   // create new components to render.
@@ -35,18 +37,21 @@ function withToggle(Component) {
   // 1. 🐨 create and return a function component called "Wrapper" which renders
   //    a <Toggle.Consumer> with a child function that renders <Component />
   //    with the props Wrapper is given as well as a toggle prop
-  // 2. 🐨 Handle `ref`s properly by using React.forwardRef:
-  //    https://reactjs.org/docs/forwarding-refs.html
-  //    💰 You can make your Wrapper function accept a second argument called
-  //    `ref` and `return React.forwardRef(Wrapper)` instead of the
-  //    `return Component` we already have above.
-  // 3. 🐨 Make it easier to debug using the React DevTools by setting a
-  //    useful `displayName` property on the Wrapper.
-  //    💰 `Wrapper.displayName = ...`
-  // 4. 🐨 Use the `hoistNonReactStatics` function (uncomment the imported above)
-  //    by calling it with the Wrapper and the Component to forward all the
-  //    static properties from the Component to the Wrapper
-  //    💰 `return hoistReactStatics(React.forwardRef(Wrapper), Component)`
+
+  const Wrapper = (props, ref) => {
+    return (
+      <Toggle.Consumer>
+        {(toggleUtils) => (
+          <Component {...props} toggle={toggleUtils} ref={ref} />
+        )}
+      </Toggle.Consumer>
+    )
+  }
+  Wrapper.displayName = `withToggle(${
+    Component.displayName || Component.name
+  })`
+
+  return hoistNonReactStatics(React.forwardRef(Wrapper), Component)
 }
 
 // Don't make changes to the Usage component. It's here to show you how your
